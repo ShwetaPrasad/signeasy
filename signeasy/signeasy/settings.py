@@ -87,6 +87,17 @@ TEMPLATES = [
     },
 ]
 
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
+
+
 WSGI_APPLICATION = 'signeasy.wsgi.application'
 
 

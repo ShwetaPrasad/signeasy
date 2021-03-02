@@ -44,6 +44,9 @@ def upload(request):
         return JsonResponse(response, status=status)
 
 
+@swagger_auto_schema(methods=['get'],
+    manual_parameters=[openapi.Parameter('document_id', openapi.IN_QUERY, description="document id", type=openapi.TYPE_STRING)],
+    responses={200: 'file downloaded', 400: 'document does not exist', 401: 'user does not have access'})
 @api_view(['GET'])
 def download(request):
     try:
@@ -76,6 +79,16 @@ def download(request):
         return JsonResponse(response, status=status)
 
 
+@swagger_auto_schema(methods=['post'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['document_id','file_content'],
+        properties={
+            'document_id': openapi.Schema(type=openapi.TYPE_STRING),
+            'file_content': openapi.Schema(type=openapi.TYPE_STRING)
+        }
+    ),
+    responses={200: 'file edited', 400: 'document does not exist'})
 @api_view(['POST'])
 def edit(request):
     try:
@@ -120,6 +133,14 @@ def edit(request):
         return JsonResponse(response, status=status)
 
 
+@swagger_auto_schema(methods=['delete'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['document_id'],
+        properties={
+            'document_id': openapi.Schema(type=openapi.TYPE_STRING)
+        },
+    responses={200: 'file deleted', 400: 'document does not exist', 401: 'user is not an owner'}))
 @api_view(['DELETE'])
 def delete(request):
     try:
@@ -148,6 +169,16 @@ def delete(request):
         return JsonResponse(response, status=status)
 
 
+@swagger_auto_schema(methods=['post'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['document_id','collaborator'],
+        properties={
+            'document_id': openapi.Schema(type=openapi.TYPE_STRING),
+            'collaborator': openapi.Schema(type=openapi.TYPE_STRING)
+        }
+    ),
+    responses={200: 'file shared'})
 @api_view(['POST'])
 def share(request):
     try:
