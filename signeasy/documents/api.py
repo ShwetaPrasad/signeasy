@@ -8,18 +8,29 @@ from django.core.files.base import ContentFile
 from django.core.files import File
 from django.http import JsonResponse
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from rest_framework.decorators import api_view
 
 from .models import Access, Document, Event 
 
 
+@swagger_auto_schema(methods=['post'],
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['file_name','file_content'],
+        properties={
+            'file_name': openapi.Schema(type=openapi.TYPE_STRING),
+            'file_content': openapi.Schema(type=openapi.TYPE_STRING)
+        }
+    ),
+    responses={200: 'file uploaded'})
 @api_view(['POST'])
 def upload(request):
     try:
         user = request.user
         file_name = request.data['file_name']
-        file_content = request.data['file_content']
+        file_content = str(request.data['file_content'])
         
         document = Document.objects.create(name=file_name)
         Event.objects.create(user=user, document=document.id, action='upload')
